@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dexx 🖤 Emu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-base: #050308;
+    --card-bg: rgba(20, 12, 30, 0.4);
+    --card-border: rgba(168, 85, 247, 0.15);
+    --neon-purple: #c084fc;
+    --neon-glow: #a855f7;
+    --text-main: #f8f4ff;
+    --text-muted: #b8a3d6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    background-color: var(--bg-base);
+    font-family: 'Outfit', sans-serif;
+  }
+
+  /* ===== INTRO SCREEN (QUESTIONS) ===== */
+  .intro-screen {
+    position: fixed;
+    inset: 0;
+    background: #050308;
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+  .intro-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .intro-box {
+    background: rgba(20, 12, 30, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--neon-purple);
+    border-radius: 28px;
+    padding: 40px 25px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(168, 85, 247, 0.3);
+    position: relative;
+  }
+  .question-slide {
+    display: none;
+    animation: fadeInSlide 0.5s ease forwards;
+  }
+  .question-slide.active {
+    display: block;
+  }
+  @keyframes fadeInSlide {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .intro-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: #fff;
+    margin-bottom: 25px;
+    text-shadow: 0 0 10px rgba(192, 132, 252, 0.5);
+  }
+  .intro-btn {
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid var(--neon-purple);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 8px;
+    transition: all 0.3s ease;
+    width: 80%;
+    max-width: 250px;
+  }
+  .intro-btn:hover {
+    background: var(--neon-purple);
+    box-shadow: 0 0 20px var(--neon-glow);
+    transform: scale(1.05);
+  }
+  .enter-btn {
+    background: linear-gradient(135deg, #7e22ce, #c084fc);
+    border: none;
+    color: #fff;
+    padding: 15px 40px;
+    border-radius: 50px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 15px;
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.6);
+    animation: pulseBtn 1.5s infinite alternate;
+  }
+  @keyframes pulseBtn {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+  }
+
+  /* ===== Dreamy Background Orbs ===== */
+  .bg-orbs {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: floatOrb 15s ease-in-out infinite alternate;
+  }
+  .orb-1 { width: 300px; height: 300px; background: #6b21a8; top: -10%; left: -10%; }
+  .orb-2 { width: 400px; height: 400px; background: #4c1d95; bottom: -20%; right: -20%; animation-delay: -5s; }
+  .orb-3 { width: 200px; height: 200px; background: #d946ef; top: 40%; left: 60%; opacity: 0.15; animation-delay: -10s; }
+
+  @keyframes floatOrb {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(50px, 50px) scale(1.2); }
+  }
+
+  /* ===== Layout ===== */
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px 100px;
+  }
+
+  /* ===== Hero Section & 3D Flower ===== */
+  .hero {
+    text-align: center;
+    padding: 20px 0 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* 3D Flower Animation */
+  .flower-container {
+    width: 120px;
+    height: 120px;
+    perspective: 1000px;
+    margin-bottom: 10px;
+  }
+  .flower {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    animation: spinFlower 12s linear infinite;
+  }
+  .petal {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 40px; height: 60px;
+    background: linear-gradient(to top, #7e22ce, #d946ef);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    transform-origin: bottom center;
+    box-shadow: 0 0 15px rgba(192, 132, 252, 0.6);
+    opacity: 0.9;
+  }
+  .petal:nth-child(1) { transform: translate(-50%, -100%) rotateX(60deg) rotateZ(0deg); }
+  .petal:nth-child(2) { transform: translate(-50%, -100%) rotateX(60deg) rotateZ(45deg); }
+  .petal:nth-child(3) { transform: translate(-50%, -100%) rotateX(60deg) rotateZ(90deg); }
+  .petal:nth-child(4) { transform: translate(-50%, -100%) rotateX(60deg) rotateZ(135deg); }
+  .petal:nth-child(5) { transform: translate(-50%, -100%) rotateX(60deg) rotateZ(180deg); }
+  .petal:nth-child(6) { transform: translate(-50%, -100%) rotateX(60deg) rotateZ(225deg); }
+  .petal:nth-child(7) { transform: translate(-50%, -100%) rotateX(60deg) rotateZ(270deg); }
+  .petal:nth-child(8) { transform: translate(-50%, -100%) rotateX(60deg) rotateZ(315deg); }
+  .flower-core {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 20px; height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) translateZ(10px);
+    box-shadow: 0 0 30px #d946ef, 0 0 50px #a855f7;
+  }
+  @keyframes spinFlower {
+    0% { transform: rotateX(20deg) rotateY(0deg) rotateZ(0deg); }
+    100% { transform: rotateX(20deg) rotateY(360deg) rotateZ(360deg); }
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 12vw, 5rem);
+    font-weight: 600;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #fff 0%, #c084fc 50%, #e879f9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: shine 4s linear infinite;
+    line-height: 1.2;
+  }
+  @keyframes shine {
+    to { background-position: 200% center; }
+  }
+  .hero p {
+    margin-top: 10px;
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ===== Premium Glass Cards ===== */
+  .card {
+    background: var(--card-bg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--card-border);
+    border-radius: 28px;
+    padding: 35px 25px;
+    margin: 35px 0;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    transition: transform 0.4s ease, border-color 0.4s ease;
+  }
+  .card:hover { border-color: rgba(168, 85, 247, 0.4); }
+
+  .card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    color: #fff;
+    letter-spacing: 0.5px;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .card h2::after {
+    content: '';
+    position: absolute;
+    bottom: -8px; left: 0; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-purple), transparent);
+  }
+
+  /* ===== Love Counter ===== */
+  .counter {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+  .counter .box {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(192, 132, 252, 0.2);
+    border-radius: 20px;
+    padding: 20px 10px;
+    transition: all 0.3s ease;
+  }
+  .counter .box:hover {
+    background: rgba(168, 85, 247, 0.1);
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    transform: translateY(-5px);
+  }
+  .counter .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #fff;
+    display: block;
+    text-shadow: 0 0 15px rgba(192, 132, 252, 0.6);
+  }
+  .counter .lbl {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    display: block;
+  }
+
+  /* ===== 3D Gallery (8 Photos) ===== */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    perspective: 1000px;
+  }
+  .photo-frame {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .gallery img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(50%) contrast(110%);
+    transition: filter 0.4s ease, transform 0.4s ease;
+  }
+  .photo-frame:hover {
+    transform: rotateY(10deg) rotateX(10deg) scale(1.05);
+    box-shadow: -10px 15px 30px rgba(168, 85, 247, 0.3);
+    border-color: rgba(192, 132, 252, 0.5);
+    z-index: 2;
+  }
+  .photo-frame:hover img {
+    filter: grayscale(0%) contrast(100%);
+    transform: scale(1.1);
+  }
+
+  /* ===== Reasons Grid ===== */
+  .reasons-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  .reason-box {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 22px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .reason-box::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; height: 100%; width: 3px;
+    background: var(--neon-purple);
+    box-shadow: 0 0 10px var(--neon-glow);
+  }
+  .reason-box:hover {
+    background: rgba(168, 85, 247, 0.08);
+    transform: translateX(5px);
+  }
+  .reason-box h3 { color: #fff; font-size: 1.1rem; margin-bottom: 8px; font-weight: 600; }
+  .reason-box p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+
+  /* ===== Timeline ===== */
+  .timeline {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-left: 20px;
+    border-left: 2px solid rgba(192, 132, 252, 0.2);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 35px;
+  }
+  .timeline-item:last-child { margin-bottom: 0; }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -28px; top: 5px;
+    width: 14px; height: 14px;
+    background: var(--bg-base);
+    border: 2px solid var(--neon-purple);
+    border-radius: 50%;
+    box-shadow: 0 0 15px var(--neon-glow);
+    transition: background 0.3s ease;
+  }
+  .timeline-item:hover::before { background: var(--neon-purple); }
+  .timeline-item h3 { color: var(--neon-purple); font-size: 1.1rem; margin-bottom: 6px; }
+  .timeline-item p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+
+  /* ===== Quote ===== */
+  .quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    line-height: 1.6;
+    min-height: 3.4em;
+    color: #e2d5f8;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    text-align: center;
+  }
+  .quote.fade { opacity: 0; transform: translateY(-10px); }
+
+  /* ===== Surprise Button ===== */
+  .btn {
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #fff;
+    padding: 18px 45px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #7e22ce, #c084fc);
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 1px;
+  }
+  .btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 0 45px rgba(192, 132, 252, 0.8);
+  }
+  .btn:active { transform: scale(0.95); }
+
+  /* ===== Modal (Surprise Popup) ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 3, 8, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+  .modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  .modal-content {
+    background: #150a24;
+    border: 1px solid var(--neon-purple);
+    border-radius: 24px;
+    padding: 15px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    transform: scale(0.8) translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 0 50px rgba(168, 85, 247, 0.4);
+  }
+  .modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+  }
+  .modal-img {
+    width: 100%;
+    border-radius: 16px;
+    display: block;
+    margin-bottom: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  }
+  .modal-text {
+    font-family: 'Playfair Display', serif;
+    color: #fff;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    padding: 0 10px;
+  }
+  .close-btn {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background: var(--neon-purple);
+    color: #fff;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 0 15px var(--neon-glow);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s ease;
+  }
+  .close-btn:hover { transform: scale(1.1) rotate(90deg); }
+
+  /* ===== Floating Click Messages ===== */
+  .click-msg {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #fff;
+    text-shadow: 0 0 15px var(--neon-purple), 0 0 30px var(--neon-glow);
+    animation: floatMsg 1.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    will-change: transform, opacity;
+    white-space: nowrap;
+  }
+  @keyframes floatMsg {
+    0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+    20%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { transform: translate(-50%, -200%) scale(1.4); opacity: 0; }
+  }
+
+  /* ===== Footer ===== */
+  footer {
+    text-align: center;
+    margin-top: 60px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+  footer .heart { color: #ff4d94; }
+
+  /* Desktop Responsive */
+  @media (min-width: 600px) {
+    .reasons-grid { grid-template-columns: repeat(2, 1fr); }
+    .gallery { grid-template-columns: repeat(4, 1fr); }
+    .counter .num { font-size: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========================================== -->
+<!-- 🚨 INTRO SCREEN (4 QUESTIONS) 🚨 -->
+<!-- ========================================== -->
+<div class="intro-screen" id="introScreen">
+  <div class="intro-box">
+    
+    <!-- Question 1 -->
+    <div class="question-slide active" id="q1">
+      <h3>Kya tum meri ho? 🥺</h3>
+      <button class="intro-btn" onclick="nextSlide('q2')">Haan 💜</button>
+      <button class="intro-btn" onclick="nextSlide('q2')">Bilkul Haan 🖤</button>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question-slide" id="q2">
+      <h3>Kya tum mujhse pyaar karti ho? 💖</h3>
+      <button class="intro-btn" onclick="nextSlide('q3')">Bahut Zyada ✨</button>
+      <button class="intro-btn" onclick="nextSlide('q3')">Infinity ♾️</button>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="question-slide" id="q3">
+      <h3>Kya tum hamesha mere saath rahogi? 🫂</h3>
+      <button class="intro-btn" onclick="nextSlide('q4')">Hamesha 🖤</button>
+      <button class="intro-btn" onclick="nextSlide('q4')">Forever 💫</button>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="question-slide" id="q4">
+      <h3>Kya tum ready ho ek surprise ke liye? 🎁</h3>
+      <button class="intro-btn" onclick="nextSlide('qFinal')">Yes, I am ready! 🚀</button>
+    </div>
+
+    <!-- Final OK Button -->
+    <div class="question-slide" id="qFinal">
+      <h3>Yayy! I Love You Emu 🖤</h3>
+      <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">Ab niche OK dabao aur website dekho ✨</p>
+      <button class="enter-btn" onclick="enterWebsite()">OK 💜</button>
+    </div>
+
+  </div>
+</div>
+<!-- ========================================== -->
+
+<!-- Dreamy Background -->
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO WITH 3D FLOWER -->
+  <header class="hero">
+    <div class="flower-container">
+      <div class="flower">
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="flower-core"></div>
+      </div>
+    </div>
+    <h1>Dexx 🖤 Emu</h1>
+    <p>Better Together ✨</p>
+  </header>
+
+  <!-- LOVE COUNTER -->
+  <section class="card">
+    <h2>Together Since</h2>
+    <div class="counter">
+      <div class="box"><span class="num" id="days">0</span><span class="lbl">Days</span></div>
+      <div class="box"><span class="num" id="hours">0</span><span class="lbl">Hours</span></div>
+      <div class="box"><span class="num" id="mins">0</span><span class="lbl">Mins</span></div>
+      <div class="box"><span class="num" id="secs">0</span><span class="lbl">Secs</span></div>
+    </div>
+  </section>
+
+  <!-- GALLERY (Aapki 8 Photos) -->
+  <section class="card">
+    <h2>Our Aesthetic World</h2>
+    <div class="gallery">
+      <div class="photo-frame"><img src="photo1.jpg" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop'" alt="Memory 1" /></div>
+      <div class="photo-frame"><img src="photo2.jpg" onerror="this.src='https://images.unsplash.com/photo-1515894359455-948474920979?q=80&w=600&auto=format&fit=crop'" alt="Memory 2" /></div>
+      <div class="photo-frame"><img src="photo3.jpg" onerror="this.src='https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?q=80&w=600&auto=format&fit=crop'" alt="Memory 3" /></div>
+      <div class="photo-frame"><img src="photo4.jpg" onerror="this.src='https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=600&auto=format&fit=crop'" alt="Memory 4" /></div>
+      <div class="photo-frame"><img src="photo5.jpg" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop'" alt="Memory 5" /></div>
+      <div class="photo-frame"><img src="photo6.jpg" onerror="this.src='https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=600&auto=format&fit=crop'" alt="Memory 6" /></div>
+      <div class="photo-frame"><img src="photo7.jpg" onerror="this.src='https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=600&auto=format&fit=crop'" alt="Memory 7" /></div>
+      <div class="photo-frame"><img src="photo8.jpg" onerror="this.src='https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=600&auto=format&fit=crop'" alt="Memory 8" /></div>
+    </div>
+  </section>
+
+  <!-- REASONS WHY I LOVE YOU -->
+  <section class="card">
+    <h2>Reasons I Love You</h2>
+    <div class="reasons-grid">
+      <div class="reason-box">
+        <h3>1. Tumhari Smile</h3>
+        <p>Duniya ki sabse pyari smile hai tumhari. Jab tum hasti ho, mera din ban jata hai.</p>
+      </div>
+      <div class="reason-box">
+        <h3>2. Tumhara Nature</h3>
+        <p>Tum kitni cute aur samajhdar ho. Tumhare saath har waqt acha lagta hai.</p>
+      </div>
+      <div class="reason-box">
+        <h3>3. Meri Biggest Support</h3>
+        <p>Har mushkil waqt mein tum mera hausla badhati ho. Tum ho toh main strong hoon.</p>
+      </div>
+      <div class="reason-box">
+        <h3>4. Tumhari Awaaz</h3>
+        <p>Tumhari awaaz sunkar hi mera stress gayab ho jata hai. Best feeling ever.</p>
+      </div>
+      <div class="reason-box">
+        <h3>5. Mere Best Friend</h3>
+        <p>Tum meri girlfriend ho, par sabse pehle meri best friend ho. Koi filter nahi.</p>
+      </div>
+      <div class="reason-box">
+        <h3>6. Tum Ho Toh Sab Hai</h3>
+        <p>Mujhe aur kuch nahi chahiye, bas tumhara saath chahiye hamesha ke liye.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUR JOURNEY TIMELINE -->
+  <section class="card">
+    <h2>Our Journey</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <h3>Pehli Baat 💬</h3>
+        <p>Jab pehli baar baat hui thi, tab hi laga tha ki kuch special hai.</p>
+      </div>
+      <div class="timeline-item">
+        <h3>Pehli Mulaqat 🥰</h3>
+        <p>Tumhe pehli baar dekh kar dil ka haal kya tha, shayad tum samajh gayi thi.</p>
+      </div>
+      <div class="timeline-item">
+        <h3>The Confession 🖤</h3>
+        <p>Jis din tumne haan kaha, us din se meri duniya badal gayi.</p>
+      </div>
+      <div class="timeline-item">
+        <h3>Aaj Aur Hamesha ✨</h3>
+        <p>Har guzarta din humein aur kareeb la raha hai. Can't wait to spend forever with you.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE -->
+  <section class="card">
+    <h2>A Little Note</h2>
+    <p class="quote" id="quote">Loading...</p>
+  </section>
+
+  <!-- SURPRISE BUTTON -->
+  <section class="card">
+    <h2>Tap for a Surprise</h2>
+    <div style="text-align: center; margin-top: 20px;">
+      <button class="btn" id="surpriseBtn">Click Me 🖤</button>
+    </div>
+  </section>
+
+  <footer>
+    Made with 🖤 by Dexx for Emu
+  </footer>
+
+</div>
+
+<!-- SURPRISE MODAL -->
+<div class="modal-overlay" id="surpriseModal">
+  <div class="modal-content">
+    <button class="close-btn" id="closeModal">&times;</button>
+    <img src="surprise.jpg" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop'" class="modal-img" alt="Surprise" />
+    <p class="modal-text">"You & Me... Better Together 🖤"</p>
+  </div>
+</div>
+
+<script>
+/* ================== EDIT YOUR DATE HERE ================== */
+const START_DATE = new Date("2023-02-14T00:00:00"); // 🔧 yahan apni date daalo
+/* ========================================================= */
+
+// ---- Intro Questions Logic ----
+function nextSlide(nextId) {
+  // Hide all slides
+  document.querySelectorAll('.question-slide').forEach(slide => {
+    slide.classList.remove('active');
+  });
+  // Show the next slide
+  document.getElementById(nextId).classList.add('active');
+}
+
+function enterWebsite() {
+  const intro = document.getElementById('introScreen');
+  intro.classList.add('hidden');
+}
+
+// ---- Love Counter ----
+const el = {
+  d: document.getElementById('days'),
+  h: document.getElementById('hours'),
+  m: document.getElementById('mins'),
+  s: document.getElementById('secs'),
+};
+
+function pad(n) { return n < 10 ? '0' + n : n; }
+
+function updateCounter() {
+  const now = Date.now();
+  const diff = Math.max(0, now - START_DATE.getTime());
+  const secs = Math.floor(diff / 1000);
+  el.d.textContent = Math.floor(secs / 86400);
+  el.h.textContent = pad(Math.floor((secs % 86400) / 3600));
+  el.m.textContent = pad(Math.floor((secs % 3600) / 60));
+  el.s.textContent = pad(secs % 60);
+}
+updateCounter();
+setInterval(updateCounter, 1000);
+
+// ---- Rotating Quotes ----
+const quotes = [
+  "You & Me 🖤",
+  "Tumhari smile meri favourite cheez hai ✨",
+  "Same sky... different places... still us 🖤",
+  "Meri duniya tumse shuru hoti hai, Emu 💫",
+  "You are my favourite notification 📱",
+  "Dexx + Emu = Forever 🖤",
+  "I found my forever in you 💜"
+];
+const quoteEl = document.getElementById('quote');
+let qi = 0;
+quoteEl.textContent = quotes[0];
+
+setInterval(() => {
+  quoteEl.classList.add('fade');
+  setTimeout(() => {
+    qi = (qi + 1) % quotes.length;
+    quoteEl.textContent = quotes[qi];
+    quoteEl.classList.remove('fade');
+  }, 500);
+}, 3500);
+
+// ---- Modal (Surprise) Logic ----
+const modal = document.getElementById('surpriseModal');
+const btn = document.getElementById('surpriseBtn');
+const closeBtn = document.getElementById('closeModal');
+
+btn.addEventListener('click', () => {
+  modal.classList.add('active');
+});
+
+closeBtn.addEventListener('click', () => {
+  modal.classList.remove('active');
+});
+
+// Close if clicked outside the content
+modal.addEventListener('click', (e) => {
+  if (e.target === modal) {
+    modal.classList.remove('active');
+  }
+});
+
+// ---- Cool Click Messages ----
+const messages = [
+  "I Love You 🖤", "My Emu 💜", "Forever ✨", 
+  "Meri Jaan 💖", "Better Together 🥰", 
+  "Dexx 🖤 Emu", "Cutie Pie 💕", "My World 🌍",
+  "You are my peace ✨", "Meri Duniya 🖤", "My Favorite 🥺"
+];
+
+function spawnMessage(x, y) {
+  // Agar intro screen abhi dikh rahi hai ya modal open hai, toh msgs na aayein
+  if(!document.getElementById('introScreen').classList.contains('hidden')) return;
+  if(modal.classList.contains('active')) return;
+
+  const msg = document.createElement('div');
+  msg.className = 'click-msg';
+  msg.textContent = messages[Math.floor(Math.random() * messages.length)];
+  msg.style.left = x + 'px';
+  msg.style.top = y + 'px';
+  document.body.appendChild(msg);
+  setTimeout(() => { msg.remove(); }, 1800);
+}
+
+document.addEventListener('pointerdown', (e) => {
+  spawnMessage(e.clientX, e.clientY);
+});
+</script>
+</body>
+</html>
