@@ -179,6 +179,7 @@
   .gift-box::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 20px; height: 100%; background: rgba(255,255,255,0.3); }
   .gift-box::after { content: ''; position: absolute; top: 50%; left: 0; transform: translateY(-50%); width: 100%; height: 20px; background: rgba(255,255,255,0.3); }
   .gift-box:hover { transform: scale(1.1) rotate(5deg); }
+  .gift-img { width: 100%; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--neon-purple); }
 
   /* ===== PRIVATE DASHBOARD ===== */
   .login-box { text-align: center; padding: 20px; }
@@ -295,11 +296,11 @@
     </div>
   </section>
 
-  <!-- GALLERY (20 Photos) -->
+  <!-- GALLERY (Yahan aapki saari 13+ photos aayengi) -->
   <section class="card" id="gallery">
     <h2>Our Memories Gallery</h2>
     <div class="gallery" id="galleryGrid">
-      <!-- Images will be injected by JS -->
+      <!-- Images injected by JS -->
     </div>
   </section>
 
@@ -383,14 +384,14 @@
     </div>
   </section>
 
-  <!-- SCRAPBOOK -->
+  <!-- SCRAPBOOK (Yahan aapki nayi photos 9,10,11,12 lagengi) -->
   <section class="card" id="scrapbook">
     <h2>Our Virtual Scrapbook</h2>
     <div class="scrapbook">
-      <div class="polaroid"><img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=300&h=300&fit=crop"><p>Best Day Ever</p></div>
-      <div class="polaroid"><img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=300&h=300&fit=crop"><p>Us</p></div>
-      <div class="polaroid"><img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=300&h=300&fit=crop"><p>Love</p></div>
-      <div class="polaroid"><img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=300&h=300&fit=crop"><p>Forever</p></div>
+      <div class="polaroid"><img src="photo9.jpg" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=300&h=300&fit=crop'"><p>Best Day Ever</p></div>
+      <div class="polaroid"><img src="photo10.jpg" onerror="this.src='https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=300&h=300&fit=crop'"><p>Us</p></div>
+      <div class="polaroid"><img src="photo11.jpg" onerror="this.src='https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=300&h=300&fit=crop'"><p>Love</p></div>
+      <div class="polaroid"><img src="photo12.jpg" onerror="this.src='https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=300&h=300&fit=crop'"><p>Forever</p></div>
     </div>
   </section>
 
@@ -415,13 +416,14 @@
     </div>
   </section>
 
-  <!-- SURPRISE BOX -->
+  <!-- SURPRISE BOX (Yahan aapki surprise.jpg aayegi) -->
   <section class="card" id="surprise">
     <h2>Interactive Surprise Box</h2>
     <div style="text-align:center;">
       <div class="gift-box" id="giftBox" onclick="openGift()"></div>
       <div id="giftContent" style="display:none; animation: fadeInSlide 0.5s;">
-        <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400" style="width:100%; border-radius:12px; margin-bottom:15px;">
+        <!-- Surprise Image -->
+        <img src="surprise.jpg" class="gift-img" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400'">
         <p style="color:var(--neon-purple); font-size:1.1rem; font-family:'Playfair Display';">You are my greatest surprise, Emu.</p>
         <button class="music-btn" style="width:auto; padding:5px 15px; margin-top:10px; font-size:0.8rem;" onclick="resetGift()">Open Again</button>
       </div>
@@ -471,7 +473,7 @@
 <div class="modal-settings" id="settingsModal">
   <div class="settings-content">
     <h2 style="color:#fff; margin-bottom:15px;">Settings</h2>
-    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Changes save to localStorage (This browser only).</p>
+    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Changes save to localStorage.</p>
     
     <label style="font-size:0.8rem; color:#fff;">Relationship Start Date</label>
     <input type="date" id="settingDate" style="color:#fff;">
@@ -514,7 +516,7 @@ function enterWebsite() {
     isPlaying = true;
     document.getElementById('mainPlayBtn').innerText = "⏸";
     document.getElementById('albumArt').classList.add('playing');
-  }).catch(e => console.log("Autoplay blocked by browser. User must click play."));
+  }).catch(e => console.log("Autoplay blocked by browser."));
 }
 
 // --- HERO COUNTER ---
@@ -528,7 +530,8 @@ setInterval(() => {
   }
 }, 1000);
 
-// --- GALLERY (20 Photos) ---
+// --- GALLERY (20 Photos: 1 to 20) ---
+// Yeh automatically photo1.jpg se lekar photo20.jpg tak dhondhega
 const galleryImages = Array.from({length: 20}, (_, i) => `photo${i+1}.jpg`);
 let currentImageIndex = 0;
 const galleryGrid = document.getElementById('galleryGrid');
