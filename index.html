@@ -88,7 +88,7 @@
     background: linear-gradient(135deg, #7e22ce, #c084fc); border: none; color: #fff;
     padding: 16px 40px; border-radius: 50px; font-size: 1.2rem; font-weight: 600;
     cursor: pointer; margin-top: 15px; box-shadow: 0 0 30px rgba(168, 85, 247, 0.6);
-    animation: pulseBtn 1.5s infinite alternate; font-family: 'Outfit', sans-serif;
+    animation: pulseBtn 1.5s infinite alternate; font-family: 'Outfit', sans-serif; width: 100%;
   }
   @keyframes pulseBtn { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
 
@@ -184,20 +184,13 @@
   .cd-box h3 { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
   .cd-time { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; color: #fff; text-shadow: 0 0 10px var(--neon-glow); }
 
-  /* ===== SECTION 5: MUSIC ===== */
-  .music-player { background: rgba(255, 255, 255, 0.02); border-radius: 20px; padding: 25px; text-align: center; border: 1px solid var(--card-border); }
-  .music-note { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; color: #e2d5f8; margin-bottom: 20px; }
-  .playlist { text-align: left; margin-top: 20px; font-size: 0.9rem; border-top: 1px solid var(--card-border); padding-top: 15px; }
-  .playlist li { margin-bottom: 10px; color: var(--text-muted); display: flex; justify-content: space-between; }
-  .playlist li span { color: #fff; font-weight: 600; }
-
-  /* ===== SECTION 6: FUTURE PLANS ===== */
+  /* ===== SECTION 5: FUTURE PLANS ===== */
   .future-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
   .future-card { background: rgba(168, 85, 247, 0.05); padding: 15px; border-radius: 16px; border: 1px dashed rgba(168, 85, 247, 0.3); text-align: center; color: #fff; }
   .future-card h3 { font-size: 1rem; margin-bottom: 5px; color: var(--neon-purple); }
   .future-card p { font-size: 0.85rem; color: var(--text-muted); }
 
-  /* ===== SECTION 7: PRIVATE DASHBOARD ===== */
+  /* ===== SECTION 6: PRIVATE DASHBOARD ===== */
   .login-box { text-align: center; padding: 20px; }
   .login-box input {
     width: 100%; max-width: 300px; padding: 14px; border-radius: 12px; border: 1px solid var(--card-border);
@@ -239,7 +232,7 @@
   }
   .modal-img { width: 100%; border-radius: 16px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
   .modal-text { font-family: 'Playfair Display', serif; font-size: 1.2rem; line-height: 1.5; color: #fff; }
-  .modal-subtext { font-size: 0.9rem; color: var(--text-muted); margin-top: 10px; }
+  .modal-subtext { font-size: 0.9rem; color: var(--text-muted); margin-top: 10px; line-height: 1.5; }
 
   /* ===== MUSIC FLOATING BUTTON ===== */
   .float-music {
@@ -316,8 +309,9 @@
 <div class="float-music" id="floatMusic" onclick="toggleMusic()">
   <div class="vinyl"><div class="vinyl-center"></div></div>
 </div>
+
+<!-- AUDIO ELEMENT (Yahan music.mp3 link kiya gaya hai) -->
 <audio id="bgAudio" loop>
-  <!-- Yahan aap apni music file ka naam daal sakte ho, jaise music.mp3 -->
   <source src="music.mp3" type="audio/mpeg">
 </audio>
 
@@ -451,7 +445,7 @@
         Woh "Better Together" wali purple neon raat. Hamesha yaad rahegi.
       </div>
       
-      <!-- Surprise Button moved here -->
+      <!-- Surprise Button -->
       <button class="action-btn" onclick="openSurprise()" style="background: linear-gradient(135deg, #4c1d95, #7e22ce); margin-top: 20px;">
         Open Surprise Photo
       </button>
@@ -490,9 +484,9 @@ function enterWebsite() {
 // Countdown Logic (Dates Customization)
 const dates = {
   anniversary: "2026-10-12T00:00:00",
-  birthday: "2026-12-25T00:00:00", // Change this
+  birthday: "2026-12-25T00:00:00", // Change this date
   firstChat: "2026-10-12T00:00:00",
-  surprise: "2026-11-01T00:00:00"  // Change this
+  surprise: "2026-11-01T00:00:00"  // Change this date
 };
 
 function updateCountdowns() {
@@ -512,7 +506,7 @@ function updateCountdowns() {
 }
 setInterval(updateCountdowns, 1000);
 
-// Music Player Logic
+// --- FIXED MUSIC PLAYER LOGIC ---
 const audio = document.getElementById('bgAudio');
 const musicBtn = document.getElementById('floatMusic');
 let isPlaying = false;
@@ -521,11 +515,16 @@ function toggleMusic() {
   if (isPlaying) {
     audio.pause();
     musicBtn.classList.remove('playing');
+    isPlaying = false;
   } else {
-    audio.play().catch(e => console.log("Audio file not found. Add music.mp3"));
-    musicBtn.classList.add('playing');
+    // play() returns a promise, we catch errors if file is missing
+    audio.play().then(() => {
+      musicBtn.classList.add('playing');
+      isPlaying = true;
+    }).catch((error) => {
+      alert("Gaana nahi chal raha! Check karo:\n1. 'music.mp3' file same folder mein hai?\n2. File ka naam exactly 'music.mp3' hai?\n3. Kya file asal mein MP3 format mein hai?");
+    });
   }
-  isPlaying = !isPlaying;
 }
 
 // Private Dashboard Logic
